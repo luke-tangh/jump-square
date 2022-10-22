@@ -7,14 +7,14 @@ BLACK = (0, 0, 0)
 GREY = (169, 169, 169)
 WHITE = (255, 255, 255)
 
-os.chdir("D:\OneDrive\Code\Repository\jump-square")
+# os.chdir("D:\OneDrive\Code\Repository\jump-square")
 
 
 class Player(object):
     def __init__(self) -> None:
-        self.size = pygame.Rect(50,50,50,50)
+        self.size = pygame.Rect(50,50,25,25)
         self.status = 0
-        player_1 = pygame.image.load(".\\assets\\player_1.jpg")
+        player_1 = pygame.image.load(".\\assets\\player_1.png")
         player_1 = pygame.transform.scale(player_1, (30, 25))
         self.all_status = [player_1]
         
@@ -43,7 +43,7 @@ class Player(object):
             self.x += self.x_speed
             self.y -= self.jump_speed
         else:
-            self.gravity += 0.03
+            self.gravity += 0.01
             self.y += self.gravity
 
         # restrict in the screen
@@ -109,14 +109,14 @@ def create_map(screen, player, obstacle_0, obstacle_1, obstacle_2) -> None:
 
 
 def check_dead(obstacle_0, obstacle_1, obstacle_2, player, height) -> bool:
-    ob_rect_l_0 = pygame.Rect(obstacle_0.wall_x-15, obstacle_0.wall_y, obstacle_0.left.get_width(), obstacle_0.left.get_height())
-    ob_rect_r_0 = pygame.Rect(obstacle_0.wall_x+395, obstacle_0.wall_y, obstacle_0.left.get_width(), obstacle_0.left.get_height())
+    ob_rect_l_0 = pygame.Rect(obstacle_0.wall_x-5, obstacle_0.wall_y, obstacle_0.left.get_width(), obstacle_0.left.get_height())
+    ob_rect_r_0 = pygame.Rect(obstacle_0.wall_x+385, obstacle_0.wall_y, obstacle_0.left.get_width(), obstacle_0.left.get_height())
 
-    ob_rect_l_1 = pygame.Rect(obstacle_1.wall_x-15, obstacle_1.wall_y, obstacle_1.left.get_width(), obstacle_1.left.get_height())
-    ob_rect_r_1 = pygame.Rect(obstacle_1.wall_x+395, obstacle_1.wall_y, obstacle_1.left.get_width(), obstacle_1.left.get_height())
+    ob_rect_l_1 = pygame.Rect(obstacle_1.wall_x-5, obstacle_1.wall_y, obstacle_1.left.get_width(), obstacle_1.left.get_height())
+    ob_rect_r_1 = pygame.Rect(obstacle_1.wall_x+385, obstacle_1.wall_y, obstacle_1.left.get_width(), obstacle_1.left.get_height())
 
-    ob_rect_l_2 = pygame.Rect(obstacle_2.wall_x-15, obstacle_2.wall_y, obstacle_2.left.get_width(), obstacle_2.left.get_height())
-    ob_rect_r_2 = pygame.Rect(obstacle_2.wall_x+395, obstacle_2.wall_y, obstacle_2.left.get_width(), obstacle_2.left.get_height())
+    ob_rect_l_2 = pygame.Rect(obstacle_2.wall_x-5, obstacle_2.wall_y, obstacle_2.left.get_width(), obstacle_2.left.get_height())
+    ob_rect_r_2 = pygame.Rect(obstacle_2.wall_x+385, obstacle_2.wall_y, obstacle_2.left.get_width(), obstacle_2.left.get_height())
 
     if ob_rect_l_0.colliderect(player.size) or ob_rect_r_0.colliderect(player.size):
         player.dead = True
