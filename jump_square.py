@@ -81,6 +81,7 @@ class Obstacle(object):
 
 
 def create_map(screen, player, obstacle_0, obstacle_1, obstacle_2) -> None:
+    global score
     screen.fill(WHITE)
 
     # obstacle initialise
@@ -100,6 +101,10 @@ def create_map(screen, player, obstacle_0, obstacle_1, obstacle_2) -> None:
     player.player_status = 0
     screen.blit(player.all_status[player.status], (player.x, player.y))
     player.update()
+
+    font = pygame.font.SysFont("arial", 50)
+    screen.blit(font.render(str(score), -1, BLACK), (190, 60))
+
     pygame.display.update()
 
 
