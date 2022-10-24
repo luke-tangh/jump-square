@@ -1,4 +1,4 @@
-import os
+# import os
 import sys
 import random
 import pygame
@@ -64,20 +64,34 @@ class Player(object):
 
 class Obstacle(object):
     def __init__(self, start_pos, x_pos) -> None:
+        # postion initials
         self.wall_y = start_pos
         self.wall_x = x_pos
+        
+        self.squ_y = start_pos - 165 - 630*3
+        self.squ_x = x_pos + gen_squ_x() 
+
+        # load assets
         self.left = pygame.image.load(".\\assets\\obstacle.jpg")
-        self.right = pygame.image.load(".\\assets\\obstacle.jpg")
         self.left = pygame.transform.scale(self.left, (250, 30))
+
+        self.right = pygame.image.load(".\\assets\\obstacle.jpg")
         self.right = pygame.transform.scale(self.right, (250, 30))
 
+        self.squ = pygame.image.load(".\\assets\\obstacle.jpg")
+        self.squ = pygame.transform.scale(self.squ, (30, 30))
+
     def update(self, player) -> None:
+        global score
         self.wall_y += player.back_move
+        self.squ_y += player.back_move
         if self.wall_y > 630:
-            global score
             score += 1
             self.wall_y -= 950
             self.wall_x = gen_obstacle_x()
+        if self.squ_y > 630:
+            self.squ_y -= 950
+            self.squ_x = self.wall_x + gen_squ_x()
 
 
 def create_map(screen, player, obstacle_0, obstacle_1, obstacle_2) -> None:
@@ -87,14 +101,20 @@ def create_map(screen, player, obstacle_0, obstacle_1, obstacle_2) -> None:
     # obstacle initialise
     screen.blit(obstacle_0.left, (obstacle_0.wall_x, obstacle_0.wall_y))
     screen.blit(obstacle_0.right, (obstacle_0.wall_x+380, obstacle_0.wall_y))
-    obstacle_0.update(player)
 
     screen.blit(obstacle_1.left, (obstacle_1.wall_x, obstacle_1.wall_y))
     screen.blit(obstacle_1.right, (obstacle_1.wall_x+380, obstacle_1.wall_y))
-    obstacle_1.update(player)
 
     screen.blit(obstacle_2.left, (obstacle_2.wall_x, obstacle_2.wall_y))
     screen.blit(obstacle_2.right, (obstacle_2.wall_x+380, obstacle_2.wall_y))
+
+    # squares
+    screen.blit(obstacle_0.squ, (obstacle_0.squ_x, obstacle_0.squ_y))
+    screen.blit(obstacle_1.squ, (obstacle_1.squ_x, obstacle_1.squ_y))
+    screen.blit(obstacle_2.squ, (obstacle_2.squ_x, obstacle_2.squ_y))
+
+    obstacle_0.update(player)
+    obstacle_1.update(player)
     obstacle_2.update(player)
 
     # player initialise
@@ -102,6 +122,7 @@ def create_map(screen, player, obstacle_0, obstacle_1, obstacle_2) -> None:
     screen.blit(player.all_status[player.status], (player.x, player.y))
     player.update()
 
+    # score board
     font = pygame.font.SysFont("arial", 50)
     screen.blit(font.render(str(score), -1, BLACK), (190, 60))
 
@@ -111,12 +132,15 @@ def create_map(screen, player, obstacle_0, obstacle_1, obstacle_2) -> None:
 def check_dead(obstacle_0, obstacle_1, obstacle_2, player, height) -> bool:
     ob_rect_l_0 = pygame.Rect(obstacle_0.wall_x-5, obstacle_0.wall_y, obstacle_0.left.get_width(), obstacle_0.left.get_height())
     ob_rect_r_0 = pygame.Rect(obstacle_0.wall_x+385, obstacle_0.wall_y, obstacle_0.left.get_width(), obstacle_0.left.get_height())
+    ob_rect_s_0 = pygame.Rect(obstacle_0.squ_x, obstacle_0.squ_y, obstacle_0.squ.get_width(), obstacle_0.squ.get_height())
 
     ob_rect_l_1 = pygame.Rect(obstacle_1.wall_x-5, obstacle_1.wall_y, obstacle_1.left.get_width(), obstacle_1.left.get_height())
     ob_rect_r_1 = pygame.Rect(obstacle_1.wall_x+385, obstacle_1.wall_y, obstacle_1.left.get_width(), obstacle_1.left.get_height())
+    ob_rect_s_1 = pygame.Rect(obstacle_1.squ_x, obstacle_1.squ_y, obstacle_1.squ.get_width(), obstacle_1.squ.get_height())
 
     ob_rect_l_2 = pygame.Rect(obstacle_2.wall_x-5, obstacle_2.wall_y, obstacle_2.left.get_width(), obstacle_2.left.get_height())
     ob_rect_r_2 = pygame.Rect(obstacle_2.wall_x+385, obstacle_2.wall_y, obstacle_2.left.get_width(), obstacle_2.left.get_height())
+    ob_rect_s_2 = pygame.Rect(obstacle_2.squ_x, obstacle_2.squ_y, obstacle_2.squ.get_width(), obstacle_2.squ.get_height())
 
     if ob_rect_l_0.colliderect(player.size) or ob_rect_r_0.colliderect(player.size):
         player.dead = True
@@ -127,6 +151,10 @@ def check_dead(obstacle_0, obstacle_1, obstacle_2, player, height) -> bool:
         return True
 
     if ob_rect_l_2.colliderect(player.size) or ob_rect_r_2.colliderect(player.size):
+        player.dead = True
+        return True
+
+    if ob_rect_s_0.colliderect(player.size) or ob_rect_s_1.colliderect(player.size) or ob_rect_s_2.colliderect(player.size):
         player.dead = True
         return True
 
@@ -158,6 +186,10 @@ def get_result(screen):
 
 def gen_obstacle_x() -> int:
     return random.randint(-200, -30)
+
+
+def gen_squ_x() -> int:
+    return random.randint(250, 300)
 
 
 def main():
