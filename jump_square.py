@@ -63,12 +63,15 @@ class Player(object):
 
 
 class Obstacle(object):
-    def __init__(self, start_pos, x_pos) -> None:
-        # postion initials
+    def __init__(self, start_pos: int, x_pos: int) -> None:
+        # record if scored
+        self.scored = False
+        
+        # position initials
         self.wall_y = start_pos
         self.wall_x = x_pos
         
-        self.squ_y = start_pos - 165 - 630*3
+        self.squ_y = start_pos - 165 - 630*2
         self.squ_x = x_pos + gen_squ_x() 
 
         # load assets
@@ -81,20 +84,28 @@ class Obstacle(object):
         self.squ = pygame.image.load(".\\assets\\obstacle.jpg")
         self.squ = pygame.transform.scale(self.squ, (30, 30))
 
-    def update(self, player) -> None:
+    def update(self, player: Player) -> None:
         global score
+
+        # sync obstacles with player
         self.wall_y += player.back_move
         self.squ_y += player.back_move
-        if self.wall_y > 630:
+
+        if not self.scored and self.wall_y > 370:
             score += 1
+            self.scored = True
+
+        if self.wall_y > 630:
             self.wall_y -= 950
             self.wall_x = gen_obstacle_x()
+            self.scored = False
+
         if self.squ_y > 630:
             self.squ_y -= 950
             self.squ_x = self.wall_x + gen_squ_x()
 
 
-def create_map(screen, player, obstacle_0, obstacle_1, obstacle_2) -> None:
+def create_map(screen: pygame.Surface, player: Player, obstacle_0: Obstacle, obstacle_1: Obstacle, obstacle_2: Obstacle) -> None:
     global score
     screen.fill(WHITE)
 
@@ -129,7 +140,7 @@ def create_map(screen, player, obstacle_0, obstacle_1, obstacle_2) -> None:
     pygame.display.update()
 
 
-def check_dead(obstacle_0, obstacle_1, obstacle_2, player, height) -> bool:
+def check_dead(obstacle_0: Obstacle, obstacle_1: Obstacle, obstacle_2: Obstacle, player: Player, height: int) -> bool:
     ob_rect_l_0 = pygame.Rect(obstacle_0.wall_x, obstacle_0.wall_y, obstacle_0.left.get_width(), obstacle_0.left.get_height())
     ob_rect_r_0 = pygame.Rect(obstacle_0.wall_x+380, obstacle_0.wall_y, obstacle_0.left.get_width(), obstacle_0.left.get_height())
     ob_rect_s_0 = pygame.Rect(obstacle_0.squ_x, obstacle_0.squ_y, obstacle_0.squ.get_width(), obstacle_0.squ.get_height())
@@ -165,7 +176,7 @@ def check_dead(obstacle_0, obstacle_1, obstacle_2, player, height) -> bool:
     return False
 
 
-def get_result(screen):
+def get_result(screen: pygame.Surface):
     final_text1 = "Game over"
     final_text2 = "score:" + str(score)
     final_text3 = "press 'R' to restart"
