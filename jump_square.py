@@ -7,8 +7,6 @@ BLACK = (0, 0, 0)
 GREY = (169, 169, 169)
 WHITE = (255, 255, 255)
 
-# os.chdir("D:\OneDrive\Code\Repository\jump-square")
-
 
 class Player(object):
     def __init__(self) -> None:
